@@ -1,0 +1,7 @@
+note over browser:
+add note to array
+update DOM and server
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa {content: "cuánto español", date: "2021-02-07T19:28:23.715Z"}
+server-->browser: {"message": "note created"}
