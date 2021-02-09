@@ -1,16 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import Header from './components/Header'
 import Form from './components/Form'
 import Person from './components/Person'
+import personService from './services/persons'
 
 const App = () => {
-  const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ])
+  const [ persons, setPersons ] = useState([])
 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
@@ -18,16 +14,41 @@ const App = () => {
   const [ filter, setFilter ] = useState('')
   const personsToShow = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
 
+  useEffect(() => {
+    personService
+      .getAll()
+      .then(persons => {
+        setPersons(persons)
+      })
+  }, [])
+
   const addPhone = (event) => {
       event.preventDefault()
 
-      if (persons.find(person => person.name === newName)) {
-          alert(`${newName} is already added to phonebook`)
-          return
+      const newPerson = {name: newName, number: newNumber}
+      const foundPerson = persons.find(person => person.name === newName)
+
+      if (foundPerson) {
+        if (!window.confirm(`${newPerson.name} is already in the phonebook, update?`)) return
+        newPerson['id'] = foundPerson.id
+
+        personService
+          .update(newPerson)
+          .then(data => {
+            setPersons(persons.map(p => {if (p.name === newName) return data; else return p}))
+            setNewName('')
+            setNewNumber('')
+          })
+        return
       }
-      setPersons(persons.concat({name: newName, number: newNumber}))
-      setNewName('')
-      setNewNumber('')
+
+      personService
+        .create(newPerson)
+        .then(data => {
+          setPersons(persons.concat(data))
+          setNewName('')
+          setNewNumber('')
+        })
   }
 
   const handleNewNameChange = (event) => {
@@ -35,10 +56,21 @@ const App = () => {
   }
 
   const handleNewNumberChange = (event) => {
-      setNewNumber(event.target.value)
+    setNewNumber(event.target.value)
   }
   
-
+  const deletePerson = (event) => {
+    if (window.confirm(`Are you sure to delete?`)) {
+      personService
+      .remove(event.target.getAttribute('id'))
+      .then(_ => {
+        setPersons(persons.filter(person => 
+          (person.id != event.target.getAttribute('id'))
+        ))
+      })
+    }
+    
+  }
 
 
   return (
@@ -54,7 +86,7 @@ const App = () => {
       <Header title='Numbers' />
 
       {personsToShow.map(person =>
-        <Person key={person.name} person={person} />
+        <Person key={person.name} person={person} deletePerson={deletePerson} />
       )}
       
     </div>
