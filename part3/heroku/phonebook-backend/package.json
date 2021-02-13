@@ -10,6 +10,7 @@
     "build:ui": "rimraf build && cd ../phonebook-frontend && npm run build --prod && copyfiles build/* build/static/js/* ../phonebook-backend/",
     "deploy": "cd ../../../ && git subtree push --prefix part3/heroku/phonebook-backend heroku master"
   },
+  "proxy": "http://localhost:3001",
   "author": "",
   "license": "ISC",
   "dependencies": {
