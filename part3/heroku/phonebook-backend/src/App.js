@@ -62,7 +62,6 @@ const App = () => {
   }
 
   const createNotification = (message, type) => {
-    console.log('Hi')
     console.log(message)
     setNotificationType(type)
     setNotificationMessage(message)
