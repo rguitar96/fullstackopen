@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ui": "rimraf build && cd ../phonebook-frontend && npm run build --prod && copyfiles build/* build/static/js/* ../phonebook-backend/",
+    "deploy": "cd ../../../ && git subtree push --prefix part3/heroku/phonebook-backend heroku master"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +18,8 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7"
+    "copyfiles": "^2.4.1",
+    "nodemon": "^2.0.7",
+    "rimraf": "^3.0.2"
   }
 }
