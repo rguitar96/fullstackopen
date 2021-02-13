@@ -59,10 +59,10 @@ const App = () => {
           setNewNumber('')
           createNotification(`Succesfully added ${newPerson.name}`, 'success')
         })
+        .catch(error => createNotification(error.response.data.error, 'error'))
   }
 
   const createNotification = (message, type) => {
-    console.log('Hi')
     console.log(message)
     setNotificationType(type)
     setNotificationMessage(message)
